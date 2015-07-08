@@ -6,7 +6,7 @@ class CreateVisits < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :visits, :vistor_id
-    add_index :visits, :visted_url
+    add_index :visits, :visitor_id
+    add_index :visits, :visited_url
   end
 end
