@@ -22,6 +22,19 @@ class ShortenedUrl < ActiveRecord::Base
     foreign_key: :submitter_id
   )
 
+  has_many(
+    :visits,
+    class_name: "Visit",
+    primary_key: :short_url,
+    foreign_key: :visited_url
+  )
+
+  has_many(
+    :visitors,
+    through: :visits,
+    source: :user
+  )
+
   def self.random_code
     new_code = SecureRandom::urlsafe_base64
     until !ShortenedUrl.exists?(new_code)
