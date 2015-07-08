@@ -52,6 +52,10 @@ class ShortenedUrl < ActiveRecord::Base
     )
   end
 
+  def self.get_newest
+    ShortenedUrl.last
+  end
+
   def num_clicks
     visits.count
   end

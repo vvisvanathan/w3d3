@@ -1,0 +1,23 @@
+puts "URL Shortener 9001"
+puts "Input your email:"
+usr = User.find_by_email(gets.chomp.downcase)
+
+puts "Hello, #{usr.email}! What do you want to do?"
+puts "0 (or anything else): create shortened URL"
+puts "1: visit shortened URL"
+
+input = gets.chomp.to_i
+
+case input
+  when 0
+    puts "Type in your long url:"
+    ShortenedUrl.create_for_user_and_long_url!(usr, gets.chomp)
+    puts "Short url is: #{ShortenedUrl.get_newest.short_url}"
+  when 1
+    puts "Type in the shortened URL:"
+    Launchy.open(ShortenedUrl.find_by_short_url(gets.chomp).long_url)
+  else
+    raise 'hell'
+end
+
+puts "CLI is over!"
