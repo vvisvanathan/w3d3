@@ -3,7 +3,7 @@
 # Table name: shortened_urls
 #
 #  id           :integer          not null, primary key
-#  long_url     :text             not null
+#  long_url     :string(1024)     not null
 #  short_url    :string
 #  submitter_id :string
 #  created_at   :datetime
@@ -14,6 +14,7 @@ class ShortenedUrl < ActiveRecord::Base
   validates :short_url, uniqueness: true, presence: true
   validates :long_url, presence: true
   validates :submitter_id, presence: true
+  validate :user_is_not_spamming
 
   belongs_to(
     :submitter,
@@ -65,11 +66,17 @@ class ShortenedUrl < ActiveRecord::Base
   end
 
   def num_recent_uniques
-    # Visit.select(:visitor_id)
-    #   .where(:visited_url => self.short_url)
-      # .where(created_at >= 10.minutes.ago)
-      # .distinct.count
+    visitors.where('created_at >= ?', 10.minutes.ago).distinct.count
+  end
 
-    visitors.where(created_at >= 10.minutes.ago).distinct.count
+  def num_recent_submissions_for_user
+    submitter.submitted_urls.where('created_at >= ?', 1.minute.ago).count
+  end
+
+  private
+  def user_is_not_spamming
+    if self.num_recent_submissions_for_user > 5
+      errors[:base] << "You can only submit 5 URLs a minute!"
+    end
   end
 end
