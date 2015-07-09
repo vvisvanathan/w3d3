@@ -31,4 +31,11 @@ class User < ActiveRecord::Base
     through: :visits,
     source: :shortened_url
   )
+
+  has_many(
+    :taggings,
+    class_name: 'Tagging',
+    primary_key: :id,
+    foreign_key: :tagger_id
+  )
 end
